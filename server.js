@@ -5,9 +5,25 @@ const hubsRouter = require('./hubs/hubs-router.js');
 
 const server = express();
 
+function dateLogger(req, res, next) {
+  console.log(new Date().toISOString());
+
+  next();
+}
+
+
+function origin(req, res, next) {
+  console.dir(req.originalUrl)
+  console.dir(req.method)
+
+
+  next();
+}
 // Global Middleware
 server.use(helmet());
 server.use(express.json());
+server.use(dateLogger);
+server.use(origin);
 
 server.use('/api/hubs', hubsRouter);
 
