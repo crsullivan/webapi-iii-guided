@@ -1,5 +1,7 @@
 const express = require('express'); // importing a CommonJS module
 const helmet = require('helmet');
+const morgan = require('morgan');
+
 
 const hubsRouter = require('./hubs/hubs-router.js');
 
@@ -19,11 +21,23 @@ function origin(req, res, next) {
 
   next();
 }
+
+function gateKeeper(req, res, next) {
+  //data can come in the body, url params, query string, headers
+  const password = req.headers.password;
+  if(password.toLowerCase() === 'mellon') {
+    next();
+  } else {
+    res.status(400).json({ you: 'cannot pass!!!!!!!'})
+  }
+}
+
 // Global Middleware
 server.use(helmet());
 server.use(express.json());
 server.use(dateLogger);
 server.use(origin);
+server.use(morgan('dev'));
 
 server.use('/api/hubs', hubsRouter);
 
