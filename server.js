@@ -24,15 +24,19 @@ function origin(req, res, next) {
 
 function gateKeeper(req, res, next) {
   //data can come in the body, url params, query string, headers
-  const password = req.headers.password;
+  const password = req.headers.password || '';
+  if(!password) {
+    res.status(400).json({ message: "please provide a password"})
+  }
   if(password.toLowerCase() === 'mellon') {
     next();
   } else {
-    res.status(400).json({ you: 'cannot pass!!!!!!!'})
+    res.status(401).json({ you: 'shall not pass!!!!!!!'})
   }
 }
 
 // Global Middleware
+server.use(gateKeeper);
 server.use(helmet());
 server.use(express.json());
 server.use(dateLogger);
